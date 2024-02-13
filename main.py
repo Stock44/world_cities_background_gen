@@ -6,35 +6,42 @@ import numpy as np
 import pandas as pd
 from PIL import Image, ImageDraw
 
+from catppuccin import Flavour
+
+MOCHA = Flavour.mocha()
+
 # country name or None for world
 # proper names
-COUNTRY: str | None = 'Ukraine'
+COUNTRY: str | None = None
 
 # list of colors for cities above second threshold
-COLORS = ['#CAEE81',
-          '#FF6B6B',
-          '#FFC65C',
-          '#FFF48A',
-          '#9CEFFF',
-          '#C19EFF']
+COLORS = [
+    MOCHA.red.hex,
+    MOCHA.blue.hex,
+    MOCHA.pink.hex,
+    MOCHA.yellow.hex,
+    MOCHA.green.hex,
+    MOCHA.teal.hex,
+    MOCHA.peach.hex,
+]
 
-FOREGROUND = '#444444'  # city color
+FOREGROUND = MOCHA.surface0.hex  # city color
 
-BACKGROUND = '#1C1C1C'  # background color
+BACKGROUND = MOCHA.base.hex  # background color
 
-RESOLUTION = (2560, 1080)
+RESOLUTION = (3456, 2160)
 
-MARGINS = [196, 512, 196, 512] # top right bottom left
+MARGINS = [196, 512, 196, 512]  # top right bottom left
 
-GRID_SPACING = 4  # space between city dots
+GRID_SPACING = 16  # space between city dots
 
-GRID_CELL_SIZE = 4  # size of city dots
+GRID_CELL_SIZE = 16  # size of city dots
 
-SUPERSAMPLE_SCALE = 4  # scale to use for supersample antialiasing
+SUPERSAMPLE_SCALE = 2  # scale to use for supersample antialiasing
 
-COLOR_THRESHOLD = 200000  # population threshold to color a city
+COLOR_THRESHOLD = 5000000  # population threshold to color a city
 
-MIN_POP_THRESHOLD = 1000  # population threshold to show a city in the map
+MIN_POP_THRESHOLD = 100000  # population threshold to show a city in the map
 
 ROTATION_ANGLE: float = 0 * pi / 180  # should be in radians
 
@@ -61,7 +68,7 @@ def main():
     cell_spacing = GRID_SPACING * SUPERSAMPLE_SCALE
     cell_size = GRID_CELL_SIZE * SUPERSAMPLE_SCALE
 
-    big_image = Image.new('RGB', resolution, BACKGROUND)
+    big_image = Image.new('RGB', resolution, "#{}".format(BACKGROUND))
 
     lon_bounds = (cities['lng'].min(), cities['lng'].max())
     lon_range = lon_bounds[1] - lon_bounds[0]
@@ -126,7 +133,7 @@ def main():
                        margins[0] + y * (cell_size + cell_spacing))
             corner2 = (corner1[0] + cell_size, corner1[1] + cell_size)
 
-            d.ellipse([corner1, corner2], fill=color)
+            d.ellipse([corner1, corner2], fill="#{}".format(color))
 
     output_im = big_image.resize(RESOLUTION, Image.LANCZOS)
 
